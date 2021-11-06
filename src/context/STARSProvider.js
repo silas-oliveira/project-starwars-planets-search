@@ -8,9 +8,7 @@ function STARSProvider({ children }) {
     filterByName: {
       name: '',
     },
-    filterByOshiroDoMal: {
-      oshiro: '',
-    },
+    filterByNumericValues: [],
   };
 
   const [planets, setPlanets] = useState([]);
@@ -34,6 +32,24 @@ function STARSProvider({ children }) {
         planetsFiltered = planetsFiltered
           .filter((element) => element.name.includes(filterByName.name));
       }
+      const { filterByNumericValues } = filters;
+      filterByNumericValues.forEach((filter) => {
+        if (filter.comparison === 'maior que') {
+        // reatribuição do novo filtro com base no filtro anterior, By T
+          planetsFiltered = planetsFiltered
+            .filter((planet) => +planet[filter.column] > +filter.value);
+        }
+        if (filter.comparison === 'menor que') {
+          // reatribuição do novo filtro com base no filtro anterior, By T
+          planetsFiltered = planetsFiltered
+            .filter((planet) => +planet[filter.column] < +filter.value);
+        }
+        if (filter.comparison === 'igual a') {
+          // reatribuição do novo filtro com base no filtro anterior, By T
+          planetsFiltered = planetsFiltered
+            .filter((planet) => +planet[filter.column] === +filter.value);
+        }
+      });
       setNamesFiltered(planetsFiltered);
     }
   }, [filters, planets]);
@@ -44,9 +60,13 @@ function STARSProvider({ children }) {
     setFilters({ ...filters, [filter]: { [name]: value } });
   }
 
+  function addFilterNumeric(inputNumeric) {
+    setFilters({ ...filters, filterByNumericValues: [inputNumeric] });
+  }
+
   return (
     <STARSContext.Provider
-      value={ { planets, handleChange, filters, namesFiltered } }
+      value={ { planets, handleChange, filters, namesFiltered, addFilterNumeric } }
     >
       { children }
     </STARSContext.Provider>
