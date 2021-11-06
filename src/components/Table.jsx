@@ -1,13 +1,19 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import STARSContext from '../context/STARSContext';
 
 function Table() {
-  const { planetsAPI, planets } = useContext(STARSContext);
-  useEffect(() => {
-    planetsAPI();
-  }, []);
+  const { namesFiltered, planets } = useContext(STARSContext);
+  const [loading, setLoading] = useState(true);
 
-  console.log(planets);
+  useEffect(() => {
+    if (namesFiltered.length === 0) {
+      setLoading(true);
+    }
+
+    if (namesFiltered.length !== 0) {
+      setLoading(false);
+    }
+  }, [namesFiltered, planets]);
 
   return (
     <div>
@@ -31,7 +37,7 @@ function Table() {
           </tr>
         </thead>
         <tbody>
-          { planets.map((planet) => (
+          {!loading && namesFiltered.map((planet) => (
             <tr key={ planet.name }>
               <td>{planet.name}</td>
               <td>{planet.rotation_period}</td>
