@@ -27,17 +27,22 @@ function STARSProvider({ children }) {
   useEffect(() => {
     if (planets.length !== 0) {
       let planetsFiltered = [...planets];
+      // console.log('let', planetsFiltered);
       const { filterByName } = filters;
       if (filterByName.name !== '') {
         planetsFiltered = planetsFiltered
           .filter((element) => element.name.includes(filterByName.name));
       }
       const { filterByNumericValues } = filters;
+      // console.log('filter', filterByNumericValues);
       filterByNumericValues.forEach((filter) => {
         if (filter.comparison === 'maior que') {
-        // reatribuição do novo filtro com base no filtro anterior, By T
+          // console.log('forEach', filter);
+          // reatribuição do novo filtro com base no filtro anterior, By T
           planetsFiltered = planetsFiltered
             .filter((planet) => +planet[filter.column] > +filter.value);
+          // console.log('filter', planet);
+          // console.log('filter Value', +filter.value);
         }
         if (filter.comparison === 'menor que') {
           // reatribuição do novo filtro com base no filtro anterior, By T
@@ -61,12 +66,34 @@ function STARSProvider({ children }) {
   }
 
   function addFilterNumeric(inputNumeric) {
-    setFilters({ ...filters, filterByNumericValues: [inputNumeric] });
+    const { filterByNumericValues } = filters;
+    setFilters({
+      ...filters,
+      filterByNumericValues: [...filterByNumericValues, inputNumeric] });
+  }
+
+  function removeFilterNumeric(columnName) {
+    const { filterByNumericValues } = filters;
+
+    const removedColumn = filterByNumericValues
+      .filter((select) => select.column !== columnName);
+
+    setFilters({
+      ...filters,
+      filterByNumericValues: removedColumn,
+    });
   }
 
   return (
     <STARSContext.Provider
-      value={ { planets, handleChange, filters, namesFiltered, addFilterNumeric } }
+      value={ {
+        planets,
+        handleChange,
+        filters,
+        namesFiltered,
+        addFilterNumeric,
+        removeFilterNumeric,
+      } }
     >
       { children }
     </STARSContext.Provider>
